@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" />
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+			integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+		<title>XOgame</title>
+		<link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+		<!-- Наши скрипты -->
+		<script src="/js/components/rooms.js" type="module"></script>
+		<script src="/js/components/auth.js" type="module"></script>
+		<script src="/js/index.js" type="module"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div
+				class="d-flex justify-content-center align-items-center mt-5"
+				style="font-size: 20px; font-weight: bold"
+			>
+				<img src="/img/logo.png" alt="logo" style="height: 60px; width: 60px" />game
+			</div>
+			<div class="card" style="margin-top: 50px">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-6">
+							<div class="row">
+								<div class="col-8">
+									<div>
+										<label for="exampleFormControlInput1" class="form-label">Ник</label>
+										<input
+											id="NicknameInput"
+											type="text"
+											class="form-control"
+											id="exampleFormControlInput1"
+											placeholder="Введите ник"
+										/>
+									</div>
+								</div>
+								<div class="col-4 d-flex align-items-end">
+									<button id="Auth" class="btn btn-primary">Авторизоваться</button>
+									<button id="Logout" class="btn btn-primary d-none">Выйти</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-6 d-flex align-items-end justify-content-end">
+							<button
+								class="btn btn-primary d-none"
+								data-bs-toggle="modal"
+								data-bs-target="#CreateRoomModal"
+							>
+								Создать комнату
+							</button>
+						</div>
+					</div>
+
+					<div class="row mt-5">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">Комнаты</div>
+								<ul id="Rooms" class="list-group list-group-flush"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Модальные окна -->
+		<div id="CreateRoomModal" class="modal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Создание комнаты</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="exampleFormControlInput1" class="form-label">Название комнаты</label>
+							<input id="RoomName" type="text" class="form-control" placeholder="Введите название" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button id="CreateRoom" type="button" class="btn btn-primary">Создать</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="RoomModal" class="modal" tabindex="-1">
+			<div class="modal-dialog modal-fullscreen">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Комната: <span id="RoomNameTitle">название</span></h5>
+						<button
+							type="button"
+							class="btn-close exit-room"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-12">
+								<div class="card">
+									<div class="card-header">Игроки</div>
+									<ul id="Rooms" class="list-group list-group-flush">
+										<li
+											id="firstPlayer"
+											class="list-group-item d-flex align-items-center justify-content-between"
+										>
+											<div>
+												<i class="fa-solid fa-circle-user"></i>
+												<span class="playerName">Игрок1</span>
+											</div>
+
+											<div class="d-flex align-items-center">
+												<span class="badge rounded-pill text-bg-danger playerStatus"
+													>Не готов</span
+												>
+											</div>
+										</li>
+										<li
+											id="secondPlayer"
+											class="list-group-item d-flex align-items-center justify-content-between d-none"
+										>
+											<div>
+												<i class="fa-solid fa-circle-user"></i>
+												<span class="playerName">Игрок2</span>
+											</div>
+
+											<div class="d-flex align-items-center">
+												<span class="badge rounded-pill text-bg-danger playerStatus"
+													>Не готов</span
+												>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer d-flex justify-content-between">
+						<button type="button" class="btn btn-danger exit-room" data-bs-dismiss="modal">
+							Покинуть комнату
+						</button>
+						<button id="CreateRoom" type="button" class="btn btn-primary">Готов</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
