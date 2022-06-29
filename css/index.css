@@ -1,0 +1,38 @@
+.box {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 1px solid #000;
+	transition: all 0.25s ease-in-out;
+	font-size: 85px;
+	text-align: center;
+	line-height: 100px;
+	cursor: pointer;
+}
+
+.box:hover {
+	background: rgb(174, 244, 255);
+	color: rgb(108, 108, 108);
+}
+
+.win {
+	background: #48ceff;
+	color: rgb(0, 94, 255);
+}
+
+.container-grid {
+	width: 300px;
+	overflow: hidden;
+	margin: 0px auto;
+}
+
+.avatar {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+}
+
+.player {
+	max-width: 500px;
+	margin: 0 auto;
+}

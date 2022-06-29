@@ -8,7 +8,7 @@ class AccountService {
 	async login(nickname) {
 		await axios
 			.post(this.url + '/Login', {
-				Nickname: nickname,
+				nickname: nickname,
 			})
 			.then(function (response) {
 				toastr.success('Авторизация прошла успешно!');

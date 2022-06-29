@@ -50,8 +50,27 @@ class RoomService {
 
 	async exit(nickname) {
 		await axios.post(this.url + `/Exit?nickname=${nickname}`).catch(function (error) {
-			toastr.error('Не удалось покинуть комнату!');
+			toastr.error('Не удалось покинуть комнат(у!');
+			throw new Error();
 		});
+	}
+
+	async getInfo(roomName) {
+		let result = null;
+		await axios
+			.get(this.url + '/GetInfo', {
+				params: {
+					name: roomName,
+				},
+			})
+			.then(function (response) {
+				result = response.data;
+			})
+			.catch(function (error) {
+				toastr.error('Не удалось получить информацию о комнате!');
+			});
+
+		return result;
 	}
 }
 

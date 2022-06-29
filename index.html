@@ -24,11 +24,21 @@
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.4/signalr.min.js"
+			integrity="sha512-grldNBeqlywsN9Niz0kz/qqcl3BY931AHO3ghT0yLMKvnu2YBC1iTnAQigzu3DS3Ve2NorQ1TXmKNCirj41GKQ=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		></script>
 
 		<!-- Наши скрипты -->
 		<script src="/js/components/rooms.js" type="module"></script>
 		<script src="/js/components/auth.js" type="module"></script>
+		<script src="/js/components/game.js" type="module"></script>
 		<script src="/js/index.js" type="module"></script>
+
+		<!-- Наши стили -->
+		<link rel="stylesheet" href="/css/index.css" />
 	</head>
 	<body>
 		<div class="container">
@@ -76,16 +86,29 @@
 					<div class="row mt-5">
 						<div class="col-12">
 							<div class="card">
-								<div class="card-header">Комнаты</div>
+								<div class="card-header d-flex justify-content-between align-items-center">
+									Комнаты
+									<i
+										id="RefreshRooms"
+										class="fa-solid fa-rotate"
+										role="button"
+										data-bs-toggle="tooltip"
+										title="Обновить"
+									></i>
+								</div>
 								<ul id="Rooms" class="list-group list-group-flush"></ul>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<footer class="d-flex justify-content-end mt-3">
+				<span id="Version"></span>
+			</footer>
 		</div>
 
 		<!-- Модальные окна -->
+		<!-- Создание комнаты -->
 		<div id="CreateRoomModal" class="modal" tabindex="-1">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -106,6 +129,7 @@
 			</div>
 		</div>
 
+		<!-- Окно комнаты + игры -->
 		<div id="RoomModal" class="modal" tabindex="-1">
 			<div class="modal-dialog modal-fullscreen">
 				<div class="modal-content">
@@ -119,7 +143,7 @@
 						></button>
 					</div>
 					<div class="modal-body">
-						<div class="row">
+						<div id="Room" class="row">
 							<div class="col-12">
 								<div class="card">
 									<div class="card-header">Игроки</div>
@@ -158,12 +182,40 @@
 								</div>
 							</div>
 						</div>
+
+						<div id="Game" class="row d-none">
+							<div class="col-12">
+								<div class="d-flex justify-content-end player">
+									<div class="d-flex flex-column align-items-center">
+										<img class="avatar" src="/img/opponent.png" alt="" />
+										<span id="OpponentNickname">Nick</span>
+									</div>
+								</div>
+								<div class="container-grid">
+									<div class="box" style="border-left: 0; border-top: 0" data-number="1"></div>
+									<div class="box" style="border-top: 0" data-number="2"></div>
+									<div class="box" style="border-top: 0; border-right: 0" data-number="3"></div>
+									<div class="box" style="border-left: 0" data-number="4"></div>
+									<div class="box" data-number="5"></div>
+									<div class="box" style="border-right: 0" data-number="6"></div>
+									<div class="box" style="border-left: 0; border-bottom: 0" data-number="7"></div>
+									<div class="box" style="border-bottom: 0" data-number="8"></div>
+									<div class="box" style="border-right: 0; border-bottom: 0" data-number="9"></div>
+								</div>
+								<div class="d-flex player">
+									<div class="d-flex flex-column align-items-center">
+										<img class="avatar" src="/img/player.png" alt="" />
+										<span id="PlayerNickname">Nick</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="modal-footer d-flex justify-content-between">
+					<div id="RoomFooter" class="modal-footer d-flex justify-content-between">
 						<button type="button" class="btn btn-danger exit-room" data-bs-dismiss="modal">
 							Покинуть комнату
 						</button>
-						<button id="CreateRoom" type="button" class="btn btn-primary">Готов</button>
+						<button id="ReadyBtn" type="button" class="btn btn-primary">Готов</button>
 					</div>
 				</div>
 			</div>
