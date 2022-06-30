@@ -30,12 +30,12 @@ class Session {
 	}
 
 	get figureType() {
-		return this.#figureType == 'Cross' ? 'X' : 'O';
+		return this.#figureType == 0 ? 'X' : 'O';
 	}
 
-	set figureType(figureType) {
-		this.#figureType = figureType;
-		$.cookie('figureType', figureType, { expires: DEFAULT_EXPIRES });
+	set figureType(value) {
+		this.#figureType = value;
+		$.cookie('figureType', value, { expires: DEFAULT_EXPIRES });
 	}
 
 	isAuth() {

@@ -16,7 +16,7 @@ class GameService {
 				result = response.data;
 			})
 			.catch(function (error) {
-				toastr.error('Не удалось сделать ход');
+				toastr.error(error.response.data);
 			});
 		return result;
 	}

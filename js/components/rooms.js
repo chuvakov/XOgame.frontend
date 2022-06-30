@@ -2,6 +2,7 @@ import roomService from './../api/roomService.js';
 import session from './../common/session.js';
 import playerService from './../api/playerService.js';
 import APP_CONSTS from '../common/appConsts.js';
+import { startGame } from './game.js';
 
 // Обработка замка комнаты
 const initLocks = () => {
@@ -13,17 +14,16 @@ const initLocks = () => {
 };
 
 // SignalR (Соединение)
-const hubConnection = new signalR.HubConnectionBuilder()
+const roomHub = new signalR.HubConnectionBuilder()
 	.withUrl(APP_CONSTS.SERVER_URL + 'hubs/room', {
 		skipNegotiation: true,
 		transport: signalR.HttpTransportType.WebSockets,
 	})
 	.build();
 
-hubConnection.start();
+roomHub.start();
 
 $(function () {
-
 	//Отображение таблицы комнат на главной
 	const init = async () => {
 		let rooms = await roomService.getAll();
@@ -90,13 +90,19 @@ $(function () {
 			$('#firstPlayer .playerStatus').removeClass('text-bg-danger');
 			$('#firstPlayer .playerStatus').addClass('text-bg-success');
 			$('#firstPlayer .playerStatus').removeClass('d-nonde');
+			$('#ReadyBtn').text('Не готов');
 		} else {
 			$('#firstPlayer .playerStatus').text('Не готов');
 			$('#firstPlayer .playerStatus').removeClass('text-bg-success');
 			$('#firstPlayer .playerStatus').addClass('text-bg-danger');
 			$('#firstPlayer .playerStatus').removeClass('d-nonde');
+			$('#ReadyBtn').text('Готов');
 		}
 		$('#RoomNameTitle').text(roomName);
+
+		$('#Game').addClass('d-none');
+		$('#Room').removeClass('d-none');
+		$('#RoomFooter').removeClass('d-none');
 
 		$('#RoomModal').modal('show');
 	};
@@ -118,7 +124,7 @@ $(function () {
 
 		// SignalR (Приемник)
 		let roomName = session.roomName; //Замыкание -->
-		hubConnection.on('ChangeStateRoom' + roomName, function (players) {
+		roomHub.on('ChangeStateRoom' + roomName, function (players) {
 			if (session.roomName != roomName) {
 				return;
 			}
@@ -126,6 +132,12 @@ $(function () {
 			let opponent = players.find((p) => p.nickname != session.nickname);
 
 			initRoom(session.roomName, player, opponent);
+
+			let playerReadyCount = $('.playerStatus.text-bg-success').length;
+
+			if (playerReadyCount === 2) {
+				startGame();
+			}
 		}); //Замыкание <--
 
 		initRoom(session.roomName, player, opponent);
@@ -149,11 +161,9 @@ $(function () {
 
 		session.roomName = roomName;
 		initRoom(roomName, players.player, players.opponent);
-		console.log(session.roomName);
 
 		// SignalR (Приемник)
-		hubConnection.on('ChangeStateRoom' + roomName, function (players) {
-			console.log('ChangeStateRoom' + roomName);
+		roomHub.on('ChangeStateRoom' + roomName, function (players) {
 			if (session.roomName != roomName) {
 				return;
 			}
@@ -161,12 +171,19 @@ $(function () {
 			let opponent = players.find((p) => p.nickname != session.nickname);
 
 			initRoom(session.roomName, player, opponent);
+
+			let playerReadyCount = $('.playerStatus.text-bg-success').length;
+
+			if (playerReadyCount === 2) {
+				startGame();
+			}
 		});
 
 		// SignalR (Отправка сигнала)
-		await hubConnection.invoke('ChangeStateRoom', roomName);
+		await roomHub.invoke('ChangeStateRoom', roomName);
 	});
 
+	// Создание комнаты
 	$('#CreateRoom').click(async function () {
 		let roomName = $('#RoomName').val();
 
@@ -176,12 +193,12 @@ $(function () {
 		}
 
 		await roomService.createRoom(roomName);
-		await hubConnection.invoke('CreateRoom', roomName);
+		await roomHub.invoke('CreateRoom', roomName);
 		$('#CreateRoomModal').modal('hide');
 	});
 
 	//Создать комнату
-	hubConnection.on('CreateRoom', function () {
+	roomHub.on('CreateRoom', function () {
 		init();
 	});
 
@@ -189,7 +206,7 @@ $(function () {
 	$('.exit-room').click(async function () {
 		try {
 			await roomService.exit(session.nickname);
-			await hubConnection.invoke('ChangeStateRoom', session.roomName);
+			await roomHub.invoke('ChangeStateRoom', session.roomName);
 
 			session.exitRoom();
 			init();
@@ -217,7 +234,7 @@ $(function () {
 			$('#ReadyBtn').text('Готов');
 		}
 
-		await hubConnection.invoke('ChangeStateRoom', session.roomName);
+		await roomHub.invoke('ChangeStateRoom', session.roomName);
 	});
 
 	$('#RefreshRooms').click(function () {
