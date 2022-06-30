@@ -108,7 +108,7 @@ $(function () {
 	};
 
 	// Автоматическое открытие комнаты
-	const openRoom = async () => {
+	const autoOpenRoom = async () => {
 		if (session.roomName === undefined) {
 			return;
 		}
@@ -144,11 +144,10 @@ $(function () {
 	};
 
 	init();
-	openRoom();
+	autoOpenRoom();
 
 	// Открытие комнаты
-	$(document).on('click', '.room', async function () {
-		let roomName = $(this).data('name');
+	const openRoom = async (roomName) => {
 		let nickname = session.nickname;
 
 		let players = await roomService.enter(nickname, roomName);
@@ -181,6 +180,12 @@ $(function () {
 
 		// SignalR (Отправка сигнала)
 		await roomHub.invoke('ChangeStateRoom', roomName);
+	};
+
+	// Открытие комнаты (клик по комнате)
+	$(document).on('click', '.room', async function () {
+		let roomName = $(this).data('name');
+		await openRoom(roomName);
 	});
 
 	// Создание комнаты
@@ -194,7 +199,9 @@ $(function () {
 
 		await roomService.createRoom(roomName);
 		await roomHub.invoke('CreateRoom', roomName);
+
 		$('#CreateRoomModal').modal('hide');
+		await openRoom(roomName);
 	});
 
 	//Когда происходит создание комнаты, мы обновляем список комнат
