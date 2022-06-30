@@ -197,7 +197,7 @@ $(function () {
 		$('#CreateRoomModal').modal('hide');
 	});
 
-	//Создать комнату
+	//Когда происходит создание комнаты, мы обновляем список комнат
 	roomHub.on('CreateRoom', function () {
 		init();
 	});
@@ -211,6 +211,11 @@ $(function () {
 			session.exitRoom();
 			init();
 		} catch {}
+	});
+
+	//Когда происходит удаление комнат, мы обновляем список комнат
+	roomHub.on('DeleteRoom', function () {
+		init();
 	});
 
 	//Изменить статус готовности в комнате
