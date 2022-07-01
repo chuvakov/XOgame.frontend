@@ -206,6 +206,8 @@ $(function () {
 
 		$('#CreateRoomModal').modal('hide');
 		await openRoom(roomName);
+
+		$('#RoomName').val('');
 	});
 
 	//Когда происходит создание комнаты, мы обновляем список комнат
