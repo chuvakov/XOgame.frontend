@@ -141,6 +141,10 @@ $(function () {
 		}); //Замыкание <--
 
 		initRoom(session.roomName, player, opponent);
+
+		if (roomInfo.isGameStarted) {
+			startGame();
+		}
 	};
 
 	init();
