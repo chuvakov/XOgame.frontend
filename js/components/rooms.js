@@ -28,7 +28,21 @@ $(function () {
 	const init = async () => {
 		let rooms = await roomService.getAll();
 
-		if (rooms === null) return;
+		if (rooms === null) {
+			$('#Rooms').addClass('d-none');
+			$('#RoomsPlaceholder').removeClass('d-none');
+			$('#RoomsPlaceholder').text('Не удалось загрузить информацию о комнатах!');
+			return;
+		}
+
+		if (rooms.length > 0) {
+			$('#Rooms').removeClass('d-none');
+			$('#RoomsPlaceholder').addClass('d-none');
+		} else {
+			$('#Rooms').addClass('d-none');
+			$('#RoomsPlaceholder').removeClass('d-none');
+			$('#RoomsPlaceholder').text('Нет созданных комнат!');
+		}
 
 		$('#Rooms').empty();
 
