@@ -17,10 +17,20 @@ const clearGameField = () => {
 	$('.box').text('');
 };
 
+let isMyTurn = false;
+
 //Запуск игры
 export const startGame = async () => {
 	clearGameField();
 	let game = await gameService.get(session.roomName);
+
+	if (game.playerTurnNickname == session.nickname) {
+		$('#PlayerTurn').text('Ваш ход');
+		isMyTurn = true;
+	} else {
+		$('#PlayerTurn').text('Ход противника');
+		isMyTurn = false;
+	}
 
 	let oponnent = game.players.find((p) => p.nickname != session.nickname);
 
@@ -38,6 +48,15 @@ export const startGame = async () => {
 	// SignalR (Приемник)
 	gameHub.on('DoStep-' + session.roomName, async function () {
 		let game = await gameService.get(session.roomName);
+
+		if (game.playerTurnNickname == session.nickname) {
+			$('#PlayerTurn').text('Ваш ход');
+			isMyTurn = true;
+		} else {
+			$('#PlayerTurn').text('Ход противника');
+			isMyTurn = false;
+		}
+
 		for (let step of game.steps) {
 			$(`.box[data-number="${step.cellNumber}"]`).text(step.figureType);
 		}
@@ -81,8 +100,11 @@ $(function () {
 		// SignalR (Отправка сигнала)
 		await gameHub.invoke('DoStep', session.roomName);
 
-		if (result.isWinner == true) {
-			//alert('Вы победили!');
+		if (isMyTurn) {
+			$('#PlayerTurn').text('Ход противника');
+		} else {
+			$('#PlayerTurn').text('Ваш ход');
 		}
+		isMyTurn = !isMyTurn;
 	});
 });

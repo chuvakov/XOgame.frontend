@@ -186,7 +186,7 @@ $(function () {
 			return;
 		}
 
-		session.figureType = players.player.figureType;
+		session.figureType = players.player.figureType; //потом убрать
 
 		session.roomName = roomName;
 		initRoom(roomName, players.player, players.opponent);
