@@ -44,7 +44,25 @@ export const startGame = async () => {
 	});
 
 	// SignalR (Приемник)
-	gameHub.on('GameFinished-' + session.nickname, async function () {
+	gameHub.on('GameFinished-' + session.nickname, async function (isWinner) {
+		if (isWinner) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Вы победили!',
+				showConfirmButton: false,
+				timer: 2500,
+				timerProgressBar: true,
+			});
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: 'Вы проиграли!',
+				showConfirmButton: false,
+				timer: 2500,
+				timerProgressBar: true,
+			});
+		}
+
 		returnToRoom();
 		clearGameField();
 	});
