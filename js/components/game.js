@@ -13,8 +13,13 @@ const gameHub = new signalR.HubConnectionBuilder()
 
 gameHub.start();
 
+const clearGameField = () => {
+	$('.box').text('');
+};
+
 //Запуск игры
 export const startGame = async () => {
+	clearGameField();
 	let game = await gameService.get(session.roomName);
 
 	let oponnent = game.players.find((p) => p.nickname != session.nickname);
@@ -41,6 +46,7 @@ export const startGame = async () => {
 	// SignalR (Приемник)
 	gameHub.on('GameFinished-' + session.nickname, async function () {
 		returnToRoom();
+		clearGameField();
 	});
 };
 

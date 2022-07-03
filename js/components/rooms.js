@@ -203,7 +203,11 @@ $(function () {
 
 			let playerReadyCount = $('.playerStatus.text-bg-success').length;
 
-			if (playerReadyCount === 2) {
+			if (
+				playerReadyCount === 2 &&
+				!$('#FirstPlayer').hasClass('d-none') &&
+				!$('#SecondPlayer').hasClass('d-none')
+			) {
 				startGame();
 			}
 		});
