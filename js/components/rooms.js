@@ -23,6 +23,18 @@ const roomHub = new signalR.HubConnectionBuilder()
 
 roomHub.start();
 
+export const returnToRoom = () => {
+	$('#Game').addClass('d-none');
+	$('#Room').removeClass('d-none');
+
+	$('.playerStatus').text('Не готов');
+	$('.playerStatus').removeClass('text-bg-success');
+	$('.playerStatus').addClass('text-bg-danger');
+	$('.playerStatus').removeClass('d-nonde');
+	$('#ReadyBtn').text('Готов');
+	$('#RoomFooter').removeClass('d-none');
+};
+
 $(function () {
 	//Отображение таблицы комнат на главной
 	const init = async () => {

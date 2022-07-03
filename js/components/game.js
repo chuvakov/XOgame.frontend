@@ -1,6 +1,7 @@
 import session from './../common/session.js';
 import gameService from './../api/gameService.js';
 import APP_CONSTS from '../common/appConsts.js';
+import { returnToRoom } from './rooms.js';
 
 // SignalR (Соединение)
 const gameHub = new signalR.HubConnectionBuilder()
@@ -36,6 +37,11 @@ export const startGame = async () => {
 			$(`.box[data-number="${step.cellNumber}"]`).text(step.figureType);
 		}
 	});
+
+	// SignalR (Приемник)
+	gameHub.on('GameFinished-' + session.nickname, async function () {
+		returnToRoom();
+	});
 };
 
 $(function () {
@@ -52,7 +58,7 @@ $(function () {
 		await gameHub.invoke('DoStep', session.roomName);
 
 		if (result.isWinner == true) {
-			alert('Вы победили!');
+			//alert('Вы победили!');
 		}
 	});
 });
