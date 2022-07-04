@@ -13,7 +13,20 @@ class PlayerService {
 				result = response.data;
 			})
 			.catch(function (error) {
-				toastr.error('Не удалось изменить статус');
+				toastr.error('Не удалось изменить статус!');
+			});
+		return result;
+	}
+
+	async getFigureType(nickname) {
+		let result = null;
+		await axios
+			.get(this.url + `/GetFigureType?nickname=${nickname}`)
+			.then(function (response) {
+				result = response.data;
+			})
+			.catch(function (error) {
+				toastr.error('Не удалось получить тип фигуры!');
 			});
 		return result;
 	}

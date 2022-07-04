@@ -2,6 +2,7 @@ import session from './../common/session.js';
 import gameService from './../api/gameService.js';
 import APP_CONSTS from '../common/appConsts.js';
 import { returnToRoom } from './rooms.js';
+import playerService from '../api/playerService.js';
 
 // SignalR (Соединение)
 const gameHub = new signalR.HubConnectionBuilder()
@@ -98,6 +99,8 @@ export const startGame = async () => {
 			clearGameField();
 		}, 2000);
 	});
+
+	session.figureType = await playerService.getFigureType(session.nickname);
 };
 
 $(function () {

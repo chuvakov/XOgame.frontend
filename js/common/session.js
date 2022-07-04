@@ -30,7 +30,7 @@ class Session {
 	}
 
 	get figureType() {
-		return this.#figureType == 0 ? 'X' : 'O';
+		return this.#figureType;
 	}
 
 	set figureType(value) {
