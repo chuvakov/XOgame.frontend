@@ -46,7 +46,11 @@ export const startGame = async () => {
 	$('#Game').removeClass('d-none');
 
 	// SignalR (Приемник)
-	gameHub.on('DoStep-' + session.roomName, async function () {
+	gameHub.on('DoStep-' + session.roomName, async function (isFinish) {
+		if (isFinish) {
+			return;
+		}
+
 		let game = await gameService.get(session.roomName);
 
 		if (game.playerTurnNickname == session.nickname) {
@@ -63,27 +67,36 @@ export const startGame = async () => {
 	});
 
 	// SignalR (Приемник)
-	gameHub.on('GameFinished-' + session.nickname, async function (isWinner) {
-		if (isWinner) {
-			Swal.fire({
-				icon: 'success',
-				title: 'Вы победили!',
-				showConfirmButton: false,
-				timer: 2500,
-				timerProgressBar: true,
-			});
+	gameHub.on('GameFinished-' + session.nickname, async function (result) {
+		let showMessage;
+
+		if (result.isWinner) {
+			showMessage = () =>
+				Swal.fire({
+					icon: 'success',
+					title: 'Вы победили!',
+					showConfirmButton: false,
+					timer: 2500,
+					timerProgressBar: true,
+				});
 		} else {
-			Swal.fire({
-				icon: 'error',
-				title: 'Вы проиграли!',
-				showConfirmButton: false,
-				timer: 2500,
-				timerProgressBar: true,
-			});
+			showMessage = () =>
+				Swal.fire({
+					icon: 'error',
+					title: 'Вы проиграли!',
+					showConfirmButton: false,
+					timer: 2500,
+					timerProgressBar: true,
+				});
+
+			$(`.box[data-number="${result.cell}"]`).text(result.figureType);
 		}
 
-		returnToRoom();
-		clearGameField();
+		setTimeout(() => {
+			showMessage();
+			returnToRoom();
+			clearGameField();
+		}, 2000);
 	});
 };
 
@@ -98,7 +111,7 @@ $(function () {
 		$(this).text(session.figureType);
 
 		// SignalR (Отправка сигнала)
-		await gameHub.invoke('DoStep', session.roomName);
+		await gameHub.invoke('DoStep', session.roomName, result.isFinish);
 
 		if (isMyTurn) {
 			$('#PlayerTurn').text('Ход противника');
