@@ -68,10 +68,10 @@ export const startGame = async () => {
 	});
 
 	// SignalR (Приемник)
-	gameHub.on('GameFinished-' + session.nickname, async function (result) {
+	gameHub.on('GameFinished-' + session.nickname, function (response) {
 		let showMessage;
 
-		if (result.isWinner) {
+		if (response.result == 0) {
 			showMessage = () =>
 				Swal.fire({
 					icon: 'success',
@@ -80,7 +80,7 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
-		} else {
+		} else if (response.result == 1) {
 			showMessage = () =>
 				Swal.fire({
 					icon: 'error',
@@ -90,7 +90,18 @@ export const startGame = async () => {
 					timerProgressBar: true,
 				});
 
-			$(`.box[data-number="${result.cell}"]`).text(result.figureType);
+			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
+		} else {
+			showMessage = () =>
+				Swal.fire({
+					icon: 'warning',
+					title: 'Ничья!',
+					showConfirmButton: false,
+					timer: 2500,
+					timerProgressBar: true,
+				});
+
+			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
 		}
 
 		setTimeout(() => {
