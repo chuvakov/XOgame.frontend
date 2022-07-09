@@ -50,7 +50,7 @@ class RoomService {
 
 	async exit(nickname) {
 		await axios.post(this.url + `/Exit?nickname=${nickname}`).catch(function (error) {
-			toastr.error('Не удалось покинуть комнат(у!');
+			toastr.error('Не удалось покинуть комнату!');
 			throw new Error();
 		});
 	}

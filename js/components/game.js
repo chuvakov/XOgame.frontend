@@ -16,6 +16,8 @@ gameHub.start();
 
 const clearGameField = () => {
 	$('.box').text('');
+	$('.box').removeClass('winner');
+	$('#Field').removeClass('vertical horizontal leftSlash rightSlash');
 };
 
 let isMyTurn = false;
@@ -102,6 +104,23 @@ export const startGame = async () => {
 				});
 
 			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
+		}
+
+		if (response.winnerPosition !== undefined) {
+			if (response.winnerPosition.type == 0) {
+				$('#Field').addClass('vertical');
+			}
+			if (response.winnerPosition.type == 1) {
+				$('#Field').addClass('horizontal');
+			}
+			if (response.winnerPosition.type == 2) {
+				$('#Field').addClass('leftSlash');
+			}
+			if (response.winnerPosition.type == 3) {
+				$('#Field').addClass('rightSlash');
+			}
+
+			response.winnerPosition.cells.forEach((cell) => $(`.box[data-number="${cell}"]`).addClass('winner'));
 		}
 
 		setTimeout(() => {
