@@ -18,6 +18,7 @@ const clearGameField = () => {
 	$('.box').text('');
 	$('.box').removeClass('winner');
 	$('#Field').removeClass('vertical horizontal leftSlash rightSlash');
+	$('#PlayerTurn').removeClass('d-none');
 };
 
 let isMyTurn = false;
@@ -123,6 +124,8 @@ export const startGame = async () => {
 			response.winnerPosition.cells.forEach((cell) => $(`.box[data-number="${cell}"]`).addClass('winner'));
 		}
 
+		$('#PlayerTurn').addClass('d-none');
+
 		setTimeout(() => {
 			showMessage();
 			returnToRoom();
@@ -136,21 +139,28 @@ export const startGame = async () => {
 $(function () {
 	//Обработка хода
 	$('.box').click(async function () {
+		if (!isMyTurn) {
+			return;
+		}
+		isMyTurn = !isMyTurn;
+
 		let cellNumber = $(this).data('number');
 		let result = await gameService.doStep(cellNumber, session.nickname);
 
-		if (result == null) return;
+		if (result == null) {
+			isMyTurn = !isMyTurn;
+			return;
+		}
 
 		$(this).text(session.figureType);
 
 		// SignalR (Отправка сигнала)
 		await gameHub.invoke('DoStep', session.roomName, result.isFinish);
 
-		if (isMyTurn) {
+		if (!isMyTurn) {
 			$('#PlayerTurn').text('Ход противника');
 		} else {
 			$('#PlayerTurn').text('Ваш ход');
 		}
-		isMyTurn = !isMyTurn;
 	});
 });
