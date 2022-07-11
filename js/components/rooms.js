@@ -3,6 +3,7 @@ import session from './../common/session.js';
 import playerService from './../api/playerService.js';
 import APP_CONSTS from '../common/appConsts.js';
 import { startGame } from './game.js';
+import gameService from '../api/gameService.js';
 
 // Обработка замка комнаты
 const initLocks = () => {
@@ -130,6 +131,26 @@ $(function () {
 		$('#Room').removeClass('d-none');
 		$('#RoomFooter').removeClass('d-none');
 
+		if (player.role == 2) {
+			$('#Start').removeClass('d-none');
+		} else {
+			$('#Start').addClass('d-none');
+		}
+
+		let playerReadyCount = $('.playerStatus.text-bg-success').length;
+		if (
+			playerReadyCount === 2 &&
+			!$('#firstPlayer').hasClass('d-none') &&
+			!$('#secondPlayer').hasClass('d-none') &&
+			!$('#Start').hasClass('d-none')
+		) {
+			console.log(1);
+			$('#Start').attr('disabled', false);
+		} else {
+			console.log(2);
+			$('#Start').attr('disabled', true);
+		}
+
 		$('#RoomModal').modal('show');
 	};
 
@@ -158,13 +179,14 @@ $(function () {
 			let opponent = players.find((p) => p.nickname != session.nickname);
 
 			initRoom(session.roomName, player, opponent);
-
-			let playerReadyCount = $('.playerStatus.text-bg-success').length;
-
-			if (playerReadyCount === 2) {
-				startGame();
-			}
 		}); //Замыкание <--
+
+		// SignalR (Приемник)
+		roomHub.on('StartGame' + roomName, async function () {
+			await gameService.startGame(roomName);
+			startGame();
+			session.isGameStarted = true;
+		});
 
 		initRoom(session.roomName, player, opponent);
 
@@ -177,19 +199,23 @@ $(function () {
 	autoOpenRoom();
 
 	// Открытие комнаты
-	const openRoom = async (roomName) => {
+	const openRoom = async (roomName, isDoEnter = true) => {
 		let nickname = session.nickname;
 
-		let players = await roomService.enter(nickname, roomName);
+		if (isDoEnter) {
+			let players = await roomService.enter(nickname, roomName);
 
-		if (players == null) {
-			return;
+			if (players == null) {
+				return;
+			}
+
+			session.figureType = players.player.figureType; //потом убрать
+			initRoom(roomName, players.player, players.opponent);
+		} else {
+			initRoom(roomName, { nickname: session.nickname, isReady: false, role: 2 }, null);
 		}
 
-		session.figureType = players.player.figureType; //потом убрать
-
 		session.roomName = roomName;
-		initRoom(roomName, players.player, players.opponent);
 
 		// SignalR (Приемник)
 		roomHub.on('ChangeStateRoom' + roomName, function (players) {
@@ -200,16 +226,13 @@ $(function () {
 			let opponent = players.find((p) => p.nickname != session.nickname);
 
 			initRoom(session.roomName, player, opponent);
+		});
 
-			let playerReadyCount = $('.playerStatus.text-bg-success').length;
-
-			if (
-				playerReadyCount === 2 &&
-				!$('#FirstPlayer').hasClass('d-none') &&
-				!$('#SecondPlayer').hasClass('d-none')
-			) {
-				startGame();
-			}
+		// SignalR (Приемник)
+		roomHub.on('StartGame' + roomName, async function () {
+			await gameService.startGame(roomName);
+			startGame();
+			session.isGameStarted = true;
 		});
 
 		// SignalR (Отправка сигнала)
@@ -224,20 +247,22 @@ $(function () {
 
 	// Создание комнаты
 	$('#CreateRoom').click(async function () {
-		let roomName = $('#RoomName').val();
+		try {
+			let roomName = $('#RoomName').val();
 
-		if (roomName == '') {
-			toastr.warning('Введите название комнаты!');
-			return;
-		}
+			if (roomName == '') {
+				toastr.warning('Введите название комнаты!');
+				return;
+			}
 
-		await roomService.createRoom(roomName);
-		await roomHub.invoke('CreateRoom', roomName);
+			await roomService.createRoom(roomName, session.nickname);
+			await roomHub.invoke('CreateRoom', roomName);
 
-		$('#CreateRoomModal').modal('hide');
-		await openRoom(roomName);
+			$('#CreateRoomModal').modal('hide');
+			await openRoom(roomName, false);
 
-		$('#RoomName').val('');
+			$('#RoomName').val('');
+		} catch {}
 	});
 
 	//Когда происходит создание комнаты, мы обновляем список комнат
@@ -287,6 +312,11 @@ $(function () {
 
 	$('#RefreshRooms').click(function () {
 		init();
+	});
+
+	// SignalR (Отправка сигнала)
+	$('#Start').click(function () {
+		roomHub.invoke('StartGame', session.roomName);
 	});
 });
 

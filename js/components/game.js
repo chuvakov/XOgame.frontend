@@ -19,6 +19,7 @@ const clearGameField = () => {
 	$('.box').removeClass('winner');
 	$('#Field').removeClass('vertical horizontal leftSlash rightSlash');
 	$('#PlayerTurn').removeClass('d-none');
+	$('#Start').attr('disabled', true);
 };
 
 let isMyTurn = false;

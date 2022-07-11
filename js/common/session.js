@@ -4,11 +4,13 @@ class Session {
 	#nickname;
 	#roomName;
 	#figureType;
+	#isGameStarted;
 
 	constructor() {
 		this.#nickname = $.cookie('nickname');
 		this.#roomName = $.cookie('roomName');
 		this.#figureType = $.cookie('figureType');
+		this.#isGameStarted = $.cookie('isGameStarted');
 	}
 
 	get nickname() {
@@ -36,6 +38,15 @@ class Session {
 	set figureType(value) {
 		this.#figureType = value;
 		$.cookie('figureType', value, { expires: DEFAULT_EXPIRES });
+	}
+
+	get isGameStarted() {
+		return this.#isGameStarted;
+	}
+
+	set isGameStarted(value) {
+		this.#isGameStarted = value;
+		$.cookie('isGameStarted', value, { expires: DEFAULT_EXPIRES });
 	}
 
 	isAuth() {

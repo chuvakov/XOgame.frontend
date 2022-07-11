@@ -1,4 +1,5 @@
 import APP_CONSTS from '../common/appConsts.js';
+import session from '../common/session.js';
 
 class RoomService {
 	constructor() {
@@ -19,16 +20,18 @@ class RoomService {
 		return result;
 	}
 
-	async createRoom(name) {
+	async createRoom(name, nickname) {
 		await axios
 			.post(this.url + '/Create', {
 				name: name,
+				managerNickname: nickname,
 			})
 			.then(function (response) {
 				toastr.success('Комната создана успешно!');
 			})
 			.catch(function (error) {
 				toastr.error('Не удалось создать комнату!');
+				throw new Error();
 			});
 	}
 

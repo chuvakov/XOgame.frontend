@@ -37,6 +37,12 @@ class GameService {
 			});
 		return result;
 	}
+
+	async startGame(roomName) {
+		await axios.post(this.url + '/StartGame?roomName=' + roomName).catch(function (error) {
+			toastr.error(error.response.data);
+		});
+	}
 }
 
 export default new GameService();
