@@ -69,6 +69,10 @@ export const startGame = async () => {
 		for (let step of game.steps) {
 			$(`.box[data-number="${step.cellNumber}"]`).text(step.figureType);
 		}
+
+		let audio = new Audio();
+		audio.src = '/music/doStep.mp3';
+		audio.play();
 	});
 
 	// SignalR (Приемник)
@@ -84,6 +88,10 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
+
+			let audio = new Audio();
+			audio.src = '/music/win.mp3';
+			audio.play();
 		} else if (response.result == 1) {
 			showMessage = () =>
 				Swal.fire({
@@ -93,6 +101,9 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
+			let audio = new Audio();
+			audio.src = '/music/lose.mp3';
+			audio.play();
 
 			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
 		} else {
@@ -104,6 +115,9 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
+			let audio = new Audio();
+			audio.src = '/music/draw.mp3';
+			audio.play();
 
 			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
 		}
@@ -135,6 +149,10 @@ export const startGame = async () => {
 	});
 
 	session.figureType = await playerService.getFigureType(session.nickname);
+
+	let audio = new Audio();
+	audio.src = '/music/startGame.mp3';
+	audio.play();
 };
 
 $(function () {
@@ -163,5 +181,9 @@ $(function () {
 		} else {
 			$('#PlayerTurn').text('Ваш ход');
 		}
+
+		let audio = new Audio();
+		audio.src = '/music/doStep.mp3';
+		audio.play();
 	});
 });
