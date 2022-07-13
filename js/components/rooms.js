@@ -212,7 +212,7 @@ $(function () {
 		if (isDoEnter) {
 			let password = null;
 			if (isHavePassword) {
-				password = await Swal.fire({
+				const { value: psw } = await Swal.fire({
 					title: 'Комната с паролем',
 					input: 'password',
 					inputLabel: 'Пароль',
@@ -223,9 +223,13 @@ $(function () {
 						autocorrect: 'off',
 					},
 				});
+
+				if (psw) {
+					password = psw;
+				}
 			}
 
-			let players = await roomService.enter(nickname, roomName, password.value);
+			let players = await roomService.enter(nickname, roomName, password);
 
 			if (players == null) {
 				return;
