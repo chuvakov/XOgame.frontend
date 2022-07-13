@@ -62,8 +62,15 @@ $(function () {
 		for (let room of rooms) {
 			$('#Rooms').append(
 				`
-                    <li class="room list-group-item d-flex align-items-center justify-content-between" data-name="${room.name}">
-                        ${room.name}
+                    <li class="room list-group-item d-flex align-items-center justify-content-between" data-name="${
+						room.name
+					}" data-is-have-password="${room.isHavePassword}"
+					">
+						<div class="d-flex align-items-center">
+							${room.name}
+							${room.isHavePassword ? `<i class="fa-solid fa-key ms-2" data-bs-toggle="tooltip" title="Комната с паролем"></i>` : ''}														
+						</div>
+                        
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
                                 <i
@@ -199,11 +206,26 @@ $(function () {
 	autoOpenRoom();
 
 	// Открытие комнаты
-	const openRoom = async (roomName, isDoEnter = true) => {
+	const openRoom = async (roomName, isDoEnter = true, isHavePassword = false) => {
 		let nickname = session.nickname;
 
 		if (isDoEnter) {
-			let players = await roomService.enter(nickname, roomName);
+			let password = null;
+			if (isHavePassword) {
+				password = await Swal.fire({
+					title: 'Комната с паролем',
+					input: 'password',
+					inputLabel: 'Пароль',
+					inputPlaceholder: 'Введите пароль',
+					inputAttributes: {
+						maxlength: 10,
+						autocapitalize: 'off',
+						autocorrect: 'off',
+					},
+				});
+			}
+
+			let players = await roomService.enter(nickname, roomName, password.value);
 
 			if (players == null) {
 				return;
@@ -242,7 +264,8 @@ $(function () {
 	// Открытие комнаты (клик по комнате)
 	$(document).on('click', '.room', async function () {
 		let roomName = $(this).data('name');
-		await openRoom(roomName);
+		let isHavePassword = $(this).data('isHavePassword');
+		await openRoom(roomName, true, isHavePassword);
 	});
 
 	// Создание комнаты
@@ -255,13 +278,23 @@ $(function () {
 				return;
 			}
 
-			await roomService.createRoom(roomName, session.nickname);
+			let password = $('#RoomPassword').val();
+
+			if ($('#SwitchPassword').is(':checked') && password == '') {
+				toastr.warning('Пароль не введен!');
+				return;
+			}
+
+			await roomService.createRoom(roomName, session.nickname, password);
 			await roomHub.invoke('CreateRoom', roomName);
 
 			$('#CreateRoomModal').modal('hide');
 			await openRoom(roomName, false);
 
 			$('#RoomName').val('');
+			$('#SwitchPassword').prop('checked', false);
+			$('#RoomPassword').attr('disabled', true);
+			$('#RoomPassword').val('');
 		} catch {}
 	});
 
@@ -317,6 +350,10 @@ $(function () {
 	// SignalR (Отправка сигнала)
 	$('#Start').click(function () {
 		roomHub.invoke('StartGame', session.roomName);
+	});
+
+	$('#SwitchPassword').click(function () {
+		$('#RoomPassword').attr('disabled', !this.checked);
 	});
 });
 

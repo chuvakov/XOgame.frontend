@@ -20,11 +20,12 @@ class RoomService {
 		return result;
 	}
 
-	async createRoom(name, nickname) {
+	async createRoom(name, nickname, password) {
 		await axios
 			.post(this.url + '/Create', {
 				name: name,
 				managerNickname: nickname,
+				password: password,
 			})
 			.then(function (response) {
 				toastr.success('Комната создана успешно!');
@@ -35,12 +36,13 @@ class RoomService {
 			});
 	}
 
-	async enter(nickname, roomName) {
+	async enter(nickname, roomName, password) {
 		let result = null;
 		await axios
 			.post(this.url + '/Enter', {
 				nickname: nickname,
 				roomName: roomName,
+				password: password,
 			})
 			.then(function (response) {
 				result = response.data;
