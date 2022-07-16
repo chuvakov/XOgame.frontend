@@ -241,7 +241,7 @@ $(function () {
 			initRoom(roomName, { nickname: session.nickname, isReady: false, role: 2 }, null);
 		}
 
-		session.roomName = roomName;
+		session.roomName = roomName.toString();
 
 		// SignalR (Приемник)
 		roomHub.on('ChangeStateRoom' + roomName, function (players) {
