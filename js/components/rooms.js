@@ -262,7 +262,7 @@ $(function () {
 		});
 
 		// SignalR (Отправка сигнала)
-		await roomHub.invoke('ChangeStateRoom', roomName);
+		await roomHub.invoke('ChangeStateRoom', session.roomName);
 	};
 
 	// Открытие комнаты (клик по комнате)
