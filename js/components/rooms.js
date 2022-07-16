@@ -229,7 +229,7 @@ $(function () {
 				}
 			}
 
-			let players = await roomService.enter(nickname, roomName, password);
+			let players = await roomService.enter(nickname, roomName.toString(), password);
 
 			if (players == null) {
 				return;
