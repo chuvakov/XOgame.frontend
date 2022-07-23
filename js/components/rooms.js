@@ -37,9 +37,23 @@ export const returnToRoom = () => {
 };
 
 $(function () {
+	//Обработка клика по поиску комнаты
+	$('#SearchButton').click(function () {
+		init();
+	});
+
+	//Обработка нажатия клавиши Enter на поиске (код клавиши 13)
+	$('#SearchRoom').on('keypress', function (e) {
+		if (e.which == 13) {
+			init();
+			return;
+		}
+	});
+
 	//Отображение таблицы комнат на главной
 	const init = async () => {
-		let rooms = await roomService.getAll();
+		let keyword = $('#SearchRoom').val();
+		let rooms = await roomService.getAll(keyword);
 
 		if (rooms === null) {
 			$('#Rooms').addClass('d-none');
@@ -347,6 +361,7 @@ $(function () {
 		await roomHub.invoke('ChangeStateRoom', session.roomName);
 	});
 
+	//Обновить список комнат
 	$('#RefreshRooms').click(function () {
 		init();
 	});
