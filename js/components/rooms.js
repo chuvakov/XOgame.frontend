@@ -229,7 +229,7 @@ $(function () {
 				}
 			}
 
-			let players = await roomService.enter(nickname, roomName, password);
+			let players = await roomService.enter(nickname, roomName.toString(), password);
 
 			if (players == null) {
 				return;
@@ -241,7 +241,7 @@ $(function () {
 			initRoom(roomName, { nickname: session.nickname, isReady: false, role: 2 }, null);
 		}
 
-		session.roomName = roomName;
+		session.roomName = roomName.toString();
 
 		// SignalR (Приемник)
 		roomHub.on('ChangeStateRoom' + roomName, function (players) {
@@ -262,7 +262,7 @@ $(function () {
 		});
 
 		// SignalR (Отправка сигнала)
-		await roomHub.invoke('ChangeStateRoom', roomName);
+		await roomHub.invoke('ChangeStateRoom', session.roomName);
 	};
 
 	// Открытие комнаты (клик по комнате)
