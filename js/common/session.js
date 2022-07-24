@@ -5,12 +5,21 @@ class Session {
 	#roomName;
 	#figureType;
 	#isGameStarted;
+	#settings;
 
 	constructor() {
 		this.#nickname = $.cookie('nickname');
 		this.#roomName = $.cookie('roomName');
 		this.#figureType = $.cookie('figureType');
 		this.#isGameStarted = $.cookie('isGameStarted');
+	}
+
+	get settings() {
+		return this.#settings;
+	}
+
+	set settings(settings) {
+		this.#settings = settings;
 	}
 
 	get nickname() {
