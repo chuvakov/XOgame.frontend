@@ -254,7 +254,7 @@ $(function () {
 			initRoom(session.roomName, player, opponent);
 		});
 
-		// SignalR (Приемник)
+		// Старт SignalR (Приемник)
 		roomHub.on('StartGame' + roomName, async function () {
 			await gameService.startGame(roomName);
 			startGame();
@@ -351,7 +351,7 @@ $(function () {
 		init();
 	});
 
-	// SignalR (Отправка сигнала)
+	// Старт SignalR (Отправка сигнала)
 	$('#Start').click(function () {
 		roomHub.invoke('StartGame', session.roomName);
 	});
