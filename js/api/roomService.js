@@ -6,10 +6,14 @@ class RoomService {
 		this.url = APP_CONSTS.SERVER_URL + 'api/Rooms';
 	}
 
-	async getAll() {
+	async getAll(keyword = null) {
 		let result = null;
 		await axios
-			.get(this.url + '/GetAll')
+			.get(this.url + '/GetAll', {
+				params: {
+					keyword: keyword,
+				},
+			})
 			.then(function (response) {
 				result = response.data;
 			})

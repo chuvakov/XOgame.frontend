@@ -70,9 +70,11 @@ export const startGame = async () => {
 			$(`.box[data-number="${step.cellNumber}"]`).text(step.figureType);
 		}
 
-		let audio = new Audio();
-		audio.src = '/music/doStep.mp3';
-		audio.play();
+		if (session.settings.soundSettings.isEnabledStep) {
+			let audio = new Audio();
+			audio.src = '/music/doStep.mp3';
+			audio.play();
+		}
 	});
 
 	// SignalR (Приемник)
@@ -89,9 +91,11 @@ export const startGame = async () => {
 					timerProgressBar: true,
 				});
 
-			let audio = new Audio();
-			audio.src = '/music/win.mp3';
-			audio.play();
+			if (session.settings.soundSettings.isEnabledWin) {
+				let audio = new Audio();
+				audio.src = '/music/win.mp3';
+				audio.play();
+			}
 		} else if (response.result == 1) {
 			showMessage = () =>
 				Swal.fire({
@@ -101,9 +105,12 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
-			let audio = new Audio();
-			audio.src = '/music/lose.mp3';
-			audio.play();
+
+			if (session.settings.soundSettings.isEnabledLose) {
+				let audio = new Audio();
+				audio.src = '/music/lose.mp3';
+				audio.play();
+			}
 
 			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
 		} else {
@@ -115,9 +122,12 @@ export const startGame = async () => {
 					timer: 2500,
 					timerProgressBar: true,
 				});
-			let audio = new Audio();
-			audio.src = '/music/draw.mp3';
-			audio.play();
+
+			if (session.settings.soundSettings.isEnabledDraw) {
+				let audio = new Audio();
+				audio.src = '/music/draw.mp3';
+				audio.play();
+			}
 
 			$(`.box[data-number="${response.cell}"]`).text(response.figureType);
 		}
@@ -150,9 +160,11 @@ export const startGame = async () => {
 
 	session.figureType = await playerService.getFigureType(session.nickname);
 
-	let audio = new Audio();
-	audio.src = '/music/startGame.mp3';
-	audio.play();
+	if (session.settings.soundSettings.isEnabledStart) {
+		let audio = new Audio();
+		audio.src = '/music/startGame.mp3';
+		audio.play();
+	}
 };
 
 $(function () {
@@ -182,8 +194,11 @@ $(function () {
 			$('#PlayerTurn').text('Ваш ход');
 		}
 
-		let audio = new Audio();
-		audio.src = '/music/doStep.mp3';
-		audio.play();
+		if (session.settings.soundSettings.isEnabledStep) {
+			let audio = new Audio();
+			audio.src = '/music/doStep.mp3';
+			audio.play();
+		}
+		console.log(session.settings);
 	});
 });
