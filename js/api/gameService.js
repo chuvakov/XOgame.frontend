@@ -39,9 +39,16 @@ class GameService {
 	}
 
 	async startGame(roomName) {
-		await axios.post(this.url + '/StartGame?roomName=' + roomName).catch(function (error) {
-			toastr.error(error.response.data);
-		});
+		let result = null;
+		await axios
+			.post(this.url + '/StartGame?roomName=' + roomName)
+			.then(function (response) {
+				result = response.data;
+			})
+			.catch(function (error) {
+				toastr.error(error.response.data);
+			});
+		return result;
 	}
 }
 

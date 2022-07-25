@@ -203,9 +203,34 @@ $(function () {
 		}); //Замыкание <--
 
 		// SignalR (Приемник)
-		roomHub.on('StartGame' + roomName, async function () {
-			startGame();
-			session.isGameStarted = true;
+		roomHub.on('StartGame' + roomName, async function (nickname) {
+			$('#CoinFlip').removeClass('d-none');
+			$('#CoinContent').addClass('d-none');
+
+			let isMyTurn = session.nickname == nickname; //кто первый ходит (для монетки)
+			$('#RoomModal').modal('hide');
+			$('#CoinModal').modal('show');
+
+			setTimeout(() => {
+				$('#CoinFlip').addClass('d-none');
+				$('#CoinContent').removeClass('d-none');
+
+				if (isMyTurn) {
+					$('#CoinImg').attr('src', '/img/win-coin.png');
+					$('#CoinText').text('Вы ходите первым!');
+				} else {
+					$('#CoinImg').attr('src', '/img/lose-coin.png');
+					$('#CoinText').text('Вы ходите вторым!');
+				}
+
+				setTimeout(() => {
+					$('#CoinModal').modal('hide');
+					$('#RoomModal').modal('show');
+
+					startGame();
+					session.isGameStarted = true;
+				}, 2000);
+			}, 700);
 		});
 
 		initRoom(session.roomName, player, opponent);
@@ -268,9 +293,34 @@ $(function () {
 		});
 
 		// Старт SignalR (Приемник)
-		roomHub.on('StartGame' + roomName, async function () {
-			startGame();
-			session.isGameStarted = true;
+		roomHub.on('StartGame' + roomName, async function (nickname) {
+			$('#CoinFlip').removeClass('d-none');
+			$('#CoinContent').addClass('d-none');
+
+			let isMyTurn = session.nickname == nickname; //кто первый ходит (для монетки)
+			$('#RoomModal').modal('hide');
+			$('#CoinModal').modal('show');
+
+			setTimeout(() => {
+				$('#CoinFlip').addClass('d-none');
+				$('#CoinContent').removeClass('d-none');
+
+				if (isMyTurn) {
+					$('#CoinImg').attr('src', '/img/win-coin.png');
+					$('#CoinText').text('Вы ходите первым!');
+				} else {
+					$('#CoinImg').attr('src', '/img/lose-coin.png');
+					$('#CoinText').text('Вы ходите вторым!');
+				}
+
+				setTimeout(() => {
+					$('#CoinModal').modal('hide');
+					$('#RoomModal').modal('show');
+
+					startGame();
+					session.isGameStarted = true;
+				}, 2000);
+			}, 700);
 		});
 
 		// SignalR (Отправка сигнала)

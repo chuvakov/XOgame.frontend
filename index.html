@@ -179,12 +179,12 @@
 
 		<!-- Окно подброса монетки -->
 		<div id="CoinModal" class="modal" tabindex="-1">
-			<div class="modal-dialog">
+			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-body d-flex justify-content-center align-items-center flex-column">
 						<h3 class="text-center">Подбрасываем монетку</h3>
 						<img id="CoinFlip" src="/img/flip-coin.gif" alt="" />
-						<div class="coin-content">
+						<div id="CoinContent" class="coin-content d-none">
 							<img id="CoinImg" class="coin-img" src="/img/win-coin.png" alt="" />
 							<h4 id="CoinText">Вы ходите первым!</h4>
 						</div>
@@ -192,6 +192,7 @@
 				</div>
 			</div>
 		</div>
+
 		<!-- Модальное окно настроек -->
 		<div id="SettingsModal" class="modal" tabindex="-1">
 			<div class="modal-dialog modal-lg">
