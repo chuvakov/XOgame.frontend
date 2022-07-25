@@ -143,3 +143,10 @@
 	transform: rotate(-45deg) translate(-63px, 148px);
 	border-radius: 12px;
 }
+
+.coin-img {
+	height: 80px;
+	width: 80px;
+	margin: 10px auto;
+	display: block;
+}
