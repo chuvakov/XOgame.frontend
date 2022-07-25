@@ -17,7 +17,7 @@ class SettingService {
 				result = response.data;
 			})
 			.catch(function (error) {
-				toastr.error('Не удалось загрузить настройуи!');
+				toastr.error('Не удалось загрузить настройки!');
 			});
 
 		return result;
