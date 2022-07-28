@@ -37,10 +37,23 @@ export const startGame = async () => {
 		isMyTurn = false;
 	}
 
-	let oponnent = game.players.find((p) => p.nickname != session.nickname);
+	let opponent = game.players.find((p) => p.nickname != session.nickname);
+	let player = game.players.find((p) => p.nickname == session.nickname);
 
-	$('#OpponentNickname').text(oponnent.nickname);
+	$('#OpponentNickname').text(opponent.nickname);
 	$('#PlayerNickname').text(session.nickname);
+
+	if (opponent.avatar != null) {
+		$('#OpponentAvatar').attr('src', `data:img/png;base64,${opponent.avatar}`);
+	} else {
+		$('#OpponentAvatar').attr('src', '/img/opponent.png');
+	}
+
+	if (player.avatar != null) {
+		$('#PlayerAvatar').attr('src', `data:img/png;base64,${player.avatar}`);
+	} else {
+		$('#PlayerAvatar').attr('src', '/img/player.png');
+	}
 
 	for (let step of game.steps) {
 		$(`.box[data-number="${step.cellNumber}"]`).text(step.figureType);

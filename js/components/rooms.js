@@ -127,6 +127,16 @@ $(function () {
 				$('#secondPlayer .playerStatus').removeClass('d-nonde');
 			}
 
+			if (opponent.avatar != null) {
+				$('#secondPlayer .default-avatar').addClass('d-none');
+				$('#secondPlayer .avatar').removeClass('d-none');
+				$('#secondPlayer .avatar').attr('src', `data:img/png;base64,${opponent.avatar}`);
+			} else {
+				$('#secondPlayer .default-avatar').removeClass('d-none');
+				$('#secondPlayer .avatar').addClass('d-none');
+				$('#secondPlayer .avatar').attr('src', '');
+			}
+
 			$('#secondPlayer').removeClass('d-none');
 		} else {
 			$('#secondPlayer').addClass('d-none');
@@ -146,6 +156,17 @@ $(function () {
 			$('#firstPlayer .playerStatus').removeClass('d-nonde');
 			$('#ReadyBtn').text('Готов');
 		}
+
+		if (player.avatar != null) {
+			$('#firstPlayer .default-avatar').addClass('d-none');
+			$('#firstPlayer .avatar').removeClass('d-none');
+			$('#firstPlayer .avatar').attr('src', `data:img/png;base64,${player.avatar}`);
+		} else {
+			$('#firstPlayer .default-avatar').removeClass('d-none');
+			$('#firstPlayer .avatar').addClass('d-none');
+			$('#firstPlayer .avatar').attr('src', '');
+		}
+
 		$('#RoomNameTitle').text(roomName);
 
 		$('#Game').addClass('d-none');

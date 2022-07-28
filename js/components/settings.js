@@ -24,6 +24,12 @@ $(function () {
 			$('#SwitchSoundAll').prop('checked', true);
 		}
 
+		if (settings.avatar != null) {
+			$('#imagePreview').attr('src', `data:img/png;base64,${settings.avatar}`);
+		} else {
+			$('#imagePreview').attr('src', '/img/player.png');
+		}
+
 		$('#SettingsModal').modal('show');
 	};
 
@@ -42,7 +48,14 @@ $(function () {
 				isEnabledStart: $('#SwitchStartGame').is(':checked'),
 			},
 		};
+
+		let avatar = $('#imageUpload').get(0).files[0];
+		let formData = new FormData();
+
+		formData.append('avatar', avatar);
+
 		await settingService.update(session.nickname, settings);
+		await settingService.loadAvatar(session.nickname, formData);
 		session.settings = settings;
 	};
 
@@ -54,5 +67,22 @@ $(function () {
 	$('#SaveSettings').on('click', async function () {
 		await update();
 		$('#SettingsModal').modal('hide');
+	});
+
+	//Загрузка аватара
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				$('#imagePreview').attr('src', e.target.result);
+				$('#imagePreview').hide();
+				$('#imagePreview').fadeIn(650);
+			};
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+
+	$('#imageUpload').change(function () {
+		readURL(this);
 	});
 });
