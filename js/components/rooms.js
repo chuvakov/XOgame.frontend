@@ -115,6 +115,13 @@ $(function () {
 		if (opponent != null) {
 			$('#secondPlayer .playerName').text(opponent.nickname);
 
+			if (opponent.role == 2) {
+				$('#secondPlayer .crown').removeClass('d-none');
+				$('#firstPlayer .crown').addClass('d-none');
+			} else {
+				$('#secondPlayer .crown').addClass('d-none');
+			}
+
 			if (opponent.isReady) {
 				$('#secondPlayer .playerStatus').text('Готов');
 				$('#secondPlayer .playerStatus').removeClass('text-bg-danger');
@@ -175,8 +182,11 @@ $(function () {
 
 		if (player.role == 2) {
 			$('#Start').removeClass('d-none');
+			$('#firstPlayer .crown').removeClass('d-none');
+			$('#secondPlayer .crown').addClass('d-none');
 		} else {
 			$('#Start').addClass('d-none');
+			$('#firstPlayer .crown').addClass('d-none');
 		}
 
 		let playerReadyCount = $('.playerStatus.text-bg-success').length;

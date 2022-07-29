@@ -236,3 +236,18 @@
 	box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
 	margin-bottom: 4px;
 }
+
+.crown {
+	position: absolute;
+	left: 40px;
+	top: 0;
+	border-radius: 100%;
+	background-color: #f8f8f8;
+	box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+	color: #ffd301;
+	height: 25px;
+	width: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
