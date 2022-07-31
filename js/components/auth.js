@@ -5,6 +5,7 @@ import initLocks from './rooms.js';
 $(function () {
 	const initPlayer = () => {
 		if (session.isAuth()) {
+			$('#Settings').removeClass('d-none');
 			$('[data-bs-target="#CreateRoomModal"]').removeClass('d-none');
 
 			$('#Logout').removeClass('d-none');
@@ -13,6 +14,7 @@ $(function () {
 			$('#NicknameInput').val(session.nickname);
 			$('#NicknameInput').attr('disabled', true);
 		} else {
+			$('#Settings').addClass('d-none');
 			$('[data-bs-target="#CreateRoomModal"]').addClass('d-none');
 
 			$('#Logout').addClass('d-none');
