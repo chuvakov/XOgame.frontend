@@ -112,6 +112,7 @@ $(function () {
 
 	//Обновление модального окна комнаты
 	const initRoom = (roomName, player, opponent) => {
+		console.log(1);
 		if (opponent != null) {
 			$('#secondPlayer .playerName').text(opponent.nickname);
 
@@ -196,10 +197,8 @@ $(function () {
 			!$('#secondPlayer').hasClass('d-none') &&
 			!$('#Start').hasClass('d-none')
 		) {
-			console.log(1);
 			$('#Start').attr('disabled', false);
 		} else {
-			console.log(2);
 			$('#Start').attr('disabled', true);
 		}
 
@@ -313,6 +312,7 @@ $(function () {
 		session.roomName = roomName.toString();
 
 		// SignalR (Приемник)
+		roomHub.off('ChangeStateRoom' + roomName);
 		roomHub.on('ChangeStateRoom' + roomName, function (players) {
 			if (session.roomName != roomName) {
 				return;
@@ -324,6 +324,7 @@ $(function () {
 		});
 
 		// Старт SignalR (Приемник)
+		roomHub.off('StartGame' + roomName);
 		roomHub.on('StartGame' + roomName, async function (nickname) {
 			$('#CoinFlip').removeClass('d-none');
 			$('#CoinContent').addClass('d-none');
@@ -404,6 +405,8 @@ $(function () {
 	$('.exit-room').click(async function () {
 		try {
 			await roomService.exit(session.nickname);
+
+			roomHub.off('ChangeStateRoom' + session.roomName);
 			await roomHub.invoke('ChangeStateRoom', session.roomName);
 
 			session.exitRoom();
