@@ -38,7 +38,6 @@ class SettingService {
 	}
 
 	async loadAvatar(nickname, avatar) {
-		console.log(avatar)
 		await axios
 			.post(this.url + '/LoadAvatar?nickname=' + nickname, avatar, {
 				headers: {

@@ -3,6 +3,7 @@ import gameService from './../api/gameService.js';
 import APP_CONSTS from '../common/appConsts.js';
 import { returnToRoom } from './rooms.js';
 import playerService from '../api/playerService.js';
+import initChat from './chat.js';
 
 // SignalR (Соединение)
 const gameHub = new signalR.HubConnectionBuilder()
@@ -178,6 +179,8 @@ export const startGame = async () => {
 		audio.src = '/music/startGame.mp3';
 		audio.play();
 	}
+
+	initChat();
 };
 
 $(function () {
@@ -212,6 +215,5 @@ $(function () {
 			audio.src = '/music/doStep.mp3';
 			audio.play();
 		}
-		console.log(session.settings);
 	});
 });

@@ -37,9 +37,13 @@
 		<script src="/js/components/auth.js" type="module"></script>
 		<script src="/js/components/game.js" type="module"></script>
 		<script src="/js/components/settings.js" type="module"></script>
+		<script src="/js/components/chat.js" type="module"></script>
 		<script src="/js/index.js" type="module"></script>
 
 		<!-- Наши стили -->
+		<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet" />
+		<link rel="stylesheet" href="/css/emiji.css" />
+		<link rel="stylesheet" href="/css/chat.css" />
 		<link rel="stylesheet" href="/css/index.css" />
 	</head>
 	<body>
@@ -376,10 +380,11 @@
 
 						<div id="Game" class="row d-none game">
 							<div class="col-12">
-								<div class="d-flex justify-content-between align-items-center player">
+								<div class="d-flex justify-content-between align-items-center player opponent">
 									<div>
 										<div id="PlayerTurn"></div>
 									</div>
+									<div class="message" style="position: inherit; left: 0%; top: 0%"></div>
 									<div class="d-flex flex-column align-items-center">
 										<img id="OpponentAvatar" class="avatar" src="/img/opponent.png" alt="" />
 										<span id="OpponentNickname">Nick</span>
@@ -400,6 +405,18 @@
 									<div class="d-flex flex-column align-items-center">
 										<img id="PlayerAvatar" class="avatar" src="/img/player.png" alt="" />
 										<span id="PlayerNickname">Nick</span>
+									</div>
+									<div class="message"></div>
+									<div class="chat">
+										<div class="chat-inp">
+											<div id="EmojiPicker" class="emoji"></div>
+											<div class="chat-input">
+												<input id="Emoji" class="input" type="text" />
+											</div>
+											<div class="opts">
+												<a class="send btn"><i class="fa-regular fa-paper-plane"></i></a>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>

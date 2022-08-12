@@ -112,7 +112,6 @@ $(function () {
 
 	//Обновление модального окна комнаты
 	const initRoom = (roomName, player, opponent) => {
-		console.log(1);
 		if (opponent != null) {
 			$('#secondPlayer .playerName').text(opponent.nickname);
 
