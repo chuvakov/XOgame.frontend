@@ -6,12 +6,23 @@ class Session {
 	#figureType;
 	#isGameStarted;
 	#settings;
+	#token;
 
 	constructor() {
 		this.#nickname = $.cookie('nickname');
 		this.#roomName = $.cookie('roomName');
 		this.#figureType = $.cookie('figureType');
 		this.#isGameStarted = $.cookie('isGameStarted');
+		this.#token = $.cookie('token');
+	}
+
+	get token() {
+		return this.#token;
+	}
+
+	set token(token) {
+		this.#token = token;
+		$.cookie('token', token, { expires: DEFAULT_EXPIRES });
 	}
 
 	get settings() {
@@ -59,12 +70,12 @@ class Session {
 	}
 
 	isAuth() {
-		return this.nickname != undefined;
+		return this.#token != undefined;
 	}
 
 	logout() {
-		$.removeCookie('nickname');
-		this.#nickname = undefined;
+		$.removeCookie('token');
+		this.#token = undefined;
 	}
 
 	exitRoom() {

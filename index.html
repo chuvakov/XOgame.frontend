@@ -47,7 +47,69 @@
 		<link rel="stylesheet" href="/css/index.css" />
 	</head>
 	<body>
-		<div class="container">
+		<div id="Authorization" class="container">
+			<div
+				class="d-flex justify-content-center align-items-center mt-3"
+				style="font-size: 20px; font-weight: bold"
+			>
+				<img src="/img/logo.png" alt="logo" style="height: 60px; width: 60px" />game
+			</div>
+
+			<div class="card" style="margin: 50px auto; max-width: 300px">
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Логин</label>
+						<input id="Login" type="text" class="form-control" placeholder="введите логин" />
+					</div>
+					<div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Пароль</label>
+						<input id="Password" type="password" class="form-control" placeholder="введите пароль" />
+					</div>
+					<a id="CreateAccount" href="#" class="link-primary">Создать аккаунт</a>
+					<button id="LoginBtn" class="btn btn-primary w-100">Войти</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="Register" class="container d-none">
+			<div
+				class="d-flex justify-content-center align-items-center mt-3"
+				style="font-size: 20px; font-weight: bold"
+			>
+				<img src="/img/logo.png" alt="logo" style="height: 60px; width: 60px" />game
+			</div>
+
+			<div class="card" style="margin: 50px auto; max-width: 300px">
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Логин</label>
+						<input id="LoginRegister" type="text" class="form-control" placeholder="введите логин" />
+					</div>
+					<div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Пароль</label>
+						<input
+							id="PasswordRegister"
+							type="password"
+							class="form-control"
+							placeholder="введите пароль"
+						/>
+					</div>
+					<div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Повтор пароля</label>
+						<input
+							id="PasswordRegisterRepeat"
+							type="password"
+							class="form-control"
+							placeholder="введите пароль"
+						/>
+					</div>
+					<a id="ReturnLogin" href="#" class="link-primary">Страница входа</a>
+					<button id="RegisterBtn" class="btn btn-primary w-100">Создать аккаунт</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="Main" class="container d-none">
 			<header class="mt-3 d-flex justify-content-end">
 				<span data-bs-toggle="tooltip" data-bs-placement="left" title="Настройки">
 					<button id="Settings" class="btn btn-secondary d-none">

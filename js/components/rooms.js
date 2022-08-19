@@ -5,15 +5,6 @@ import APP_CONSTS from '../common/appConsts.js';
 import { startGame } from './game.js';
 import gameService from '../api/gameService.js';
 
-// Обработка замка комнаты
-const initLocks = () => {
-	if (session.isAuth()) {
-		$('.lock').addClass('d-none');
-	} else {
-		$('.lock').removeClass('d-none');
-	}
-};
-
 // SignalR (Соединение)
 const roomHub = new signalR.HubConnectionBuilder()
 	.withUrl(APP_CONSTS.SERVER_URL + 'hubs/room', {
@@ -36,6 +27,58 @@ export const returnToRoom = () => {
 	$('#RoomFooter').removeClass('d-none');
 };
 
+//Отображение таблицы комнат на главной
+export const init = async () => {
+	let keyword = $('#SearchRoom').val();
+	let rooms = await roomService.getAll(keyword);
+
+	if (rooms === null) {
+		$('#Rooms').addClass('d-none');
+		$('#RoomsPlaceholder').removeClass('d-none');
+		$('#RoomsPlaceholder').text('Не удалось загрузить информацию о комнатах!');
+		return;
+	}
+
+	if (rooms.length > 0) {
+		$('#Rooms').removeClass('d-none');
+		$('#RoomsPlaceholder').addClass('d-none');
+	} else {
+		$('#Rooms').addClass('d-none');
+		$('#RoomsPlaceholder').removeClass('d-none');
+		$('#RoomsPlaceholder').text('Нет созданных комнат!');
+	}
+
+	$('#Rooms').empty();
+
+	for (let room of rooms) {
+		$('#Rooms').append(
+			`
+				<li class="room list-group-item d-flex align-items-center justify-content-between" data-name="${
+					room.name
+				}" data-is-have-password="${room.isHavePassword}"
+				">
+					<div class="d-flex align-items-center">
+						${room.name}
+						${room.isHavePassword ? `<i class="fa-solid fa-key ms-2" data-bs-toggle="tooltip" title="Комната с паролем"></i>` : ''}														
+					</div>
+					
+					<div class="d-flex align-items-center">
+						<div class="d-flex align-items-center">
+							<i
+								class="fa-solid fa-users me-1"
+								data-bs-toggle="tooltip"
+								data-bs-placement="top"
+								title="Кол-во игроков"
+							></i>
+							${room.amountUsers} / ${room.maxAmountUsers}
+						</div>
+					</div>
+				</li>
+			`
+		);
+	}
+};
+
 $(function () {
 	//Обработка клика по поиску комнаты
 	$('#SearchButton').click(function () {
@@ -49,66 +92,6 @@ $(function () {
 			return;
 		}
 	});
-
-	//Отображение таблицы комнат на главной
-	const init = async () => {
-		let keyword = $('#SearchRoom').val();
-		let rooms = await roomService.getAll(keyword);
-
-		if (rooms === null) {
-			$('#Rooms').addClass('d-none');
-			$('#RoomsPlaceholder').removeClass('d-none');
-			$('#RoomsPlaceholder').text('Не удалось загрузить информацию о комнатах!');
-			return;
-		}
-
-		if (rooms.length > 0) {
-			$('#Rooms').removeClass('d-none');
-			$('#RoomsPlaceholder').addClass('d-none');
-		} else {
-			$('#Rooms').addClass('d-none');
-			$('#RoomsPlaceholder').removeClass('d-none');
-			$('#RoomsPlaceholder').text('Нет созданных комнат!');
-		}
-
-		$('#Rooms').empty();
-
-		for (let room of rooms) {
-			$('#Rooms').append(
-				`
-                    <li class="room list-group-item d-flex align-items-center justify-content-between" data-name="${
-						room.name
-					}" data-is-have-password="${room.isHavePassword}"
-					">
-						<div class="d-flex align-items-center">
-							${room.name}
-							${room.isHavePassword ? `<i class="fa-solid fa-key ms-2" data-bs-toggle="tooltip" title="Комната с паролем"></i>` : ''}														
-						</div>
-                        
-                        <div class="d-flex align-items-center">
-                            <div class="d-flex align-items-center">
-                                <i
-                                    class="fa-solid fa-users me-1"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="top"
-                                    title="Кол-во игроков"
-                                ></i>
-                                ${room.amountUsers} / ${room.maxAmountUsers}
-                            </div>
-                            <i                                  
-                                class="lock fa-solid fa-lock ms-5"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="Авторизуйтесь"
-                            ></i>
-                        </div>
-                    </li>
-                `
-			);
-		}
-
-		initLocks();
-	};
 
 	//Обновление модального окна комнаты
 	const initRoom = (roomName, player, opponent) => {
@@ -206,6 +189,10 @@ $(function () {
 
 	// Автоматическое открытие комнаты
 	const autoOpenRoom = async () => {
+		if (!session.isAuth()) {
+			return;
+		}
+
 		if (session.roomName === undefined) {
 			return;
 		}
@@ -269,7 +256,6 @@ $(function () {
 		}
 	};
 
-	init();
 	autoOpenRoom();
 
 	// Открытие комнаты
@@ -457,5 +443,3 @@ $(function () {
 		$('#RoomPassword').attr('disabled', !this.checked);
 	});
 });
-
-export default initLocks;

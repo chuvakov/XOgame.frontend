@@ -1,10 +1,29 @@
 import accountService from './../api/accountService.js';
 import session from './../common/session.js';
-import initLocks from './rooms.js';
+import { init } from './rooms.js';
+import settingService from '../api/settingService.js';
 
-$(function () {
-	const initPlayer = () => {
+const redirectToAuth = () => {
+	$('#Main').addClass('d-none');
+	$('#Authorization').removeClass('d-none');
+};
+
+$(async function () {
+	const initMain = async () => {
+		await init();
+
+		let settings = await settingService.getAll(session.nickname);
+
+		if (settings != null) {
+			session.settings = settings;
+		}
+	};
+
+	const initPlayer = async () => {
 		if (session.isAuth()) {
+			$('#Main').removeClass('d-none');
+			$('#Authorization').addClass('d-none');
+
 			$('#Settings').removeClass('d-none');
 			$('[data-bs-target="#CreateRoomModal"]').removeClass('d-none');
 
@@ -13,41 +32,100 @@ $(function () {
 
 			$('#NicknameInput').val(session.nickname);
 			$('#NicknameInput').attr('disabled', true);
+
+			await initMain();
 		} else {
-			$('#Settings').addClass('d-none');
-			$('[data-bs-target="#CreateRoomModal"]').addClass('d-none');
-
-			$('#Logout').addClass('d-none');
-			$('#Auth').removeClass('d-none');
-
-			$('#NicknameInput').val('');
-			$('#NicknameInput').attr('disabled', false);
+			redirectToAuth();
 		}
 	};
 
-	initPlayer();
+	await initPlayer();
 
-	$('#Auth').click(async function () {
+	$('#LoginBtn').click(async function () {
 		try {
-			let nickname = $('#NicknameInput').val();
+			let nickname = $('#Login').val();
 
 			if (nickname == '') {
-				toastr.warning('Введите ник!');
+				toastr.warning('Введите логин!');
 				return;
 			}
 
-			await accountService.login(nickname);
-			session.nickname = nickname;
+			let password = $('#Password').val();
 
-			initPlayer();
-			initLocks();
+			if (password == '') {
+				toastr.warning('Введите пароль!');
+				return;
+			}
+
+			let token = await accountService.login(nickname, password);
+
+			if (token == null) {
+				return;
+			}
+
+			session.nickname = nickname;
+			session.token = token;
+
+			await initPlayer();
 		} catch {}
 	});
 
-	$('#Logout').click(function () {
+	$('#Logout').click(async function () {
 		session.logout();
+		await initPlayer();
+	});
 
-		initPlayer();
-		initLocks();
+	$('#CreateAccount').click(function () {
+		$('#Authorization').addClass('d-none');
+		$('#Register').removeClass('d-none');
+	});
+
+	$('#ReturnLogin').click(function () {
+		$('#Authorization').removeClass('d-none');
+		$('#Register').addClass('d-none');
+	});
+
+	$('#RegisterBtn').click(async function () {
+		let nickname = $('#LoginRegister').val();
+		let password = $('#PasswordRegister').val();
+		let passwordRepeat = $('#PasswordRegisterRepeat').val();
+
+		if (nickname == '') {
+			toastr.warning('Поле логин пустое!');
+			return;
+		}
+
+		if (password == '') {
+			toastr.warning('Поле пароль пустое!');
+			return;
+		}
+
+		if (passwordRepeat == '') {
+			toastr.warning('Поле повтор пароля пустое!');
+			return;
+		}
+
+		if (passwordRepeat != password) {
+			toastr.warning('Пароли не совпадают!');
+			return;
+		}
+
+		try {
+			await accountService.register(nickname, password);
+
+			$('#Authorization').removeClass('d-none');
+			$('#Register').addClass('d-none');
+
+			$('#LoginRegister').val('');
+			$('#PasswordRegister').val('');
+			$('#PasswordRegisterRepeat').val('');
+
+			$('#Login').val('');
+			$('#Password').val('');
+		} catch (error) {
+			console.log(error);
+		}
 	});
 });
+
+export default redirectToAuth;

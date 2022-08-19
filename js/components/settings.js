@@ -54,8 +54,7 @@ $(function () {
 
 		formData.append('avatar', avatar);
 
-		await settingService.update(session.nickname, settings);
-		await settingService.loadAvatar(session.nickname, formData);
+		await settingService.update(session.nickname, settings, formData);
 		session.settings = settings;
 	};
 

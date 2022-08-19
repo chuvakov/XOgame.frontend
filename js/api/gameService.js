@@ -1,4 +1,6 @@
 import APP_CONSTS from '../common/appConsts.js';
+import redirectToAuth from '../components/auth.js';
+import session from '../common/session.js';
 
 class GameService {
 	constructor() {
@@ -8,14 +10,25 @@ class GameService {
 	async doStep(cell, nickname) {
 		let result = null;
 		await axios
-			.post(this.url + '/DoStep', {
-				cellNumber: cell,
-				nickname: nickname,
-			})
+			.post(
+				this.url + '/DoStep',
+				{
+					cellNumber: cell,
+					nickname: nickname,
+				},
+				{
+					headers: {
+						Authorization: 'Bearer ' + session.token,
+					},
+				}
+			)
 			.then(function (response) {
 				result = response.data;
 			})
 			.catch(function (error) {
+				if (error.response.status == 401) {
+					redirectToAuth();
+				}
 				toastr.error(error.response.data);
 			});
 		return result;
@@ -28,11 +41,17 @@ class GameService {
 				params: {
 					roomName,
 				},
+				headers: {
+					Authorization: 'Bearer ' + session.token,
+				},
 			})
 			.then(function (response) {
 				result = response.data;
 			})
 			.catch(function (error) {
+				if (error.response.status == 401) {
+					redirectToAuth();
+				}
 				toastr.error('Не удалось получить данные игры');
 			});
 		return result;
@@ -41,11 +60,22 @@ class GameService {
 	async startGame(roomName) {
 		let result = null;
 		await axios
-			.post(this.url + '/StartGame?roomName=' + roomName)
+			.post(
+				this.url + '/StartGame?roomName=' + roomName,
+				{},
+				{
+					headers: {
+						Authorization: 'Bearer ' + session.token,
+					},
+				}
+			)
 			.then(function (response) {
 				result = response.data;
 			})
 			.catch(function (error) {
+				if (error.response.status == 401) {
+					redirectToAuth();
+				}
 				toastr.error(error.response.data);
 			});
 		return result;

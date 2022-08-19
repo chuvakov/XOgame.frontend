@@ -23,6 +23,16 @@ const initChat = () => {
 			$('.opponent .message').fadeOut();
 		}, 2000);
 	});
+
+	//Эмоджи
+	emojiPicker({
+		selector: '#EmojiPicker',
+		input: '#Emoji',
+		ajax: function () {
+			let emojiGroups = emojiService.getAllGroups();
+			return emojiGroups;
+		},
+	});
 };
 
 $(function () {
@@ -63,17 +73,6 @@ $(function () {
 				$('.chat-inp .opts .send').click();
 			}
 		});
-	});
-
-	//Эмоджи
-
-	emojiPicker({
-		selector: '#EmojiPicker',
-		input: '#Emoji',
-		ajax: function () {
-			let emojiGroups = emojiService.getAllGroups();
-			return emojiGroups;
-		},
 	});
 });
 
